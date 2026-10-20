@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ташкент · Каталог услуг</title>
+<style>
+:root{--bg:#121b1d;--surface:#182628;--surface-2:#1d2f31;--line:rgba(143,191,165,.16);--text:#e9e6dc;--muted:#8ea29e;--accent:#8fbfa5;--accent-ink:#0f1a1b;--accent-soft:rgba(143,191,165,.12);--warn:#e0b38c;color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+header{padding:64px 0 36px;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+header::before{content:"";position:absolute;inset:0;background:radial-gradient(800px 280px at 90% -30%,rgba(143,191,165,.14),transparent 70%);pointer-events:none}
+.eyebrow{font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(32px,5vw,52px);line-height:1.1;margin:16px 0 14px}
+.lead{color:var(--muted);font-size:15px;line-height:1.6;max-width:580px}
+.stats{display:flex;gap:36px;margin-top:30px;flex-wrap:wrap}
+.stat b{display:block;font-family:Georgia,serif;font-weight:400;font-size:28px;color:var(--accent)}
+.stat span{font-size:13px;color:var(--muted)}
+.toolbar{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:28px 0 20px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{background:transparent;border:1px solid var(--line);color:var(--muted);padding:9px 16px;border-radius:999px;font-size:14px;cursor:pointer;transition:all .2s;font-family:inherit}
+.chip:hover{color:var(--text);border-color:rgba(143,191,165,.45)}
+.chip.active{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.chip small{opacity:.7;margin-left:4px}
+.filters{display:flex;gap:12px;flex-wrap:wrap;align-items:center;padding-bottom:22px}
+input,select{background:var(--surface);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:10px 14px;font-size:14px;outline:none;font-family:inherit}
+input{min-width:240px;flex:1;max-width:340px}
+input:focus,select:focus{border-color:var(--accent)}
+input::placeholder{color:#5f706d}
+select option{background:var(--surface)}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);cursor:pointer;user-select:none;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.toggle input{min-width:0;max-width:none;width:15px;height:15px;accent-color:var(--accent);padding:0;margin:0}
+.toggle.on{color:var(--text);border-color:rgba(143,191,165,.4)}
+.map-box{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:28px}
+.map-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.map-head h2{font-family:Georgia,serif;font-weight:400;font-size:18px}
+.map-head span{font-size:12px;color:var(--muted)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+svg.map{width:100%;height:auto;display:block;border-radius:14px;background:linear-gradient(160deg,#1a2c2e,#142123)}
+.marker{cursor:pointer;transition:r .2s}
+.marker:hover,.marker.focus{stroke:var(--text);stroke-width:2}
+.count{color:var(--muted);font-size:13px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding-bottom:70px}
+.card{background:linear-gradient(180deg,var(--surface-2),var(--surface));border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:12px;transition:transform .25s,border-color .25s,box-shadow .25s}
+.card:hover{transform:translateY(-2px);border-color:rgba(143,191,165,.35)}
+.card.focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 10px;border-radius:999px}
+.fav{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1;padding:2px 4px;transition:color .2s}
+.fav:hover{color:var(--warn)}
+.fav.on{color:var(--warn)}
+.rating{font-size:13px;color:var(--warn)}
+.rating small{color:var(--muted);font-size:12px;margin-left:4px}
+.card h3{font-family:Georgia,serif;font-weight:400;font-size:19px;line-height:1.3}
+.meta{display:grid;gap:7px;font-size:13.5px;color:var(--muted);line-height:1.5}
+.meta div{display:flex;gap:10px}
+.meta i{font-style:normal;color:var(--accent);width:14px;flex-shrink:0;text-align:center}
+.status{font-size:12px;padding:3px 9px;border-radius:999px;align-self:flex-start}
+.status.open{color:var(--accent);background:var(--accent-soft)}
+.status.closed{color:var(--muted);background:rgba(255,255,255,.04)}
+.actions{margin-top:auto;padding-top:6px;display:flex;gap:8px}
+.btn{flex:1;text-align:center;text-decoration:none;font-size:14px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);color:var(--text);transition:all .2s;background:none;cursor:pointer;font-family:inherit}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn.primary:hover{color:var(--accent-ink);opacity:.9}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:56px 0}
+footer{border-top:1px solid var(--line);padding:26px 0 40px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+body.light{--bg:#f4f6f3;--surface:#ffffff;--surface-2:#f7faf8;--line:rgba(40,90,70,.16);--text:#1d2a2b;--muted:#5d6f6b;--accent:#2f7a5c;--accent-ink:#ffffff;--accent-soft:rgba(47,122,92,.1);--warn:#b0712f;color-scheme:light}
+.tool{background:var(--surface);border:1px solid var(--line);color:var(--muted);border-radius:12px;padding:10px 14px;font-size:14px;cursor:pointer;font-family:inherit;transition:all .2s}
+.tool:hover{color:var(--text);border-color:var(--accent)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--accent-ink);padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:10}
+.toast.show{opacity:1}
+.totop{position:fixed;right:20px;bottom:20px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;font-size:18px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
+.totop.show{opacity:1;pointer-events:auto}
+.card{animation:fadeUp .4s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.actions{flex-wrap:wrap}
+.actions .btn{flex:1 1 auto}
+@media (max-width:640px){
+header{padding:44px 0 28px}
+input{min-width:0;width:100%;max-width:none}
+.stats{gap:26px}
+.filters{width:100%}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="wrap">
+<div class="eyebrow">Ташкент · Местные сервисы</div>
+<h1>Каталог услуг</h1>
+<p class="lead">Мастерские, автосервисы, салоны красоты и клиники. Рейтинги и контакты собраны из открытых карточек организаций.</p>
+<div class="stats">
+<div class="stat"><b id="statTotal">0</b><span>организаций</span></div>
+<div class="stat"><b>4</b><span>категории</span></div>
+<div class="stat"><b id="statOpen">0</b><span>работают круглосуточно</span></div>
+<div class="stat"><b id="statFav">0</b><span>в избранном</span></div>
+</div>
+</div>
+</header>
+
+<main class="wrap">
+<div class="toolbar">
+<div class="chips" id="chips"></div>
+</div>
+
+<div class="filters">
+<input type="search" id="search" placeholder="Поиск по названию или адресу">
+<select id="minRating">
+<option value="0">Любой рейтинг</option>
+<option value="4.5">от 4.5</option>
+<option value="4.8">от 4.8</option>
+</select>
+<select id="sort">
+<option value="rating">По рейтингу</option>
+<option value="reviews">По отзывам</option>
+<option value="name">По названию</option>
+<option value="near">Ближе к центру</option>
+</select>
+<label class="toggle" id="t24"><input type="checkbox" id="only24">Только круглосуточно</label>
+<label class="toggle" id="tfav"><input type="checkbox" id="onlyFav">Только избранное</label>
+<button class="tool" id="randBtn">Случайное место</button>
+<button class="tool" id="resetBtn">Сбросить</button>
+<button class="tool" id="mapBtn">Скрыть схему</button>
+<button class="tool" id="themeBtn">Светлая тема</button>
+<button class="tool" id="copyFavBtn">Копировать избранное</button>
+</div>
+
+<div class="map-box" id="mapBox">
+<div class="map-head">
+<h2>Схема расположения</h2>
+<div class="legend" id="legend"></div>
+</div>
+<svg class="map" id="map" viewBox="0 0 800 420" role="img" aria-label="Схема расположения организаций"></svg>
+<div class="count" style="margin:10px 0 0">Схема без подложки. Нажмите на точку, чтобы перейти к карточке.</div>
+</div>
+
+<div class="count" id="count"></div>
+<div class="grid" id="grid"></div>
+</main>
+
+<div class="wrap">
+<footer>
+<span>Данные носят информационный характер и могут меняться. Часы работы уточняйте по телефону.</span>
+<span>Ташкент, Узбекистан</span>
+</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+<button class="totop" id="topBtn" aria-label="Наверх">↑</button>
+<script>
+const CATEGORIES = [
+{ id: "all", name: "Все", color: "#8fbfa5" },
+{ id: "repair", name: "Ремонт техники", color: "#8fbfa5" },
+{ id: "auto", name: "Автосервис", color: "#a9b9d9" },
+{ id: "beauty", name: "Салоны красоты", color: "#e3aba1" },
+{ id: "dental", name: "Стоматология", color: "#dcc692" }
+];
+
+const PLACES = [
+{ id: "r1", cat: "repair", name: "Единый сервисный центр", area: "Навои, 21Б", lat: 41.3207, lng: 69.2576, rating: 4.6, reviews: 140, hours: "Пн–Сб 9:00–22:00", phone: "+998998002662", open247: false },
+{ id: "r2", cat: "repair", name: "Remont Bitavoy Texniki", area: "Паркент, 11 · Мирзо-Улугбек", lat: 41.3157, lng: 69.3230, rating: 4.8, reviews: 44, hours: "Пн–Сб 9:00–19:00", phone: "+998951456595", open247: false },
+{ id: "r3", cat: "repair", name: "Aleks Pro Servis", area: "1-й проезд Катта", lat: 41.2897, lng: 69.2675, rating: 4.9, reviews: 30, hours: "Ежедневно 8:00–22:00", phone: "+998994114757", open247: false },
+{ id: "r4", cat: "repair", name: "VIP FIX", area: "Тупик Мирошох, 7", lat: 41.2806, lng: 69.2731, rating: 5.0, reviews: 4, hours: "Ежедневно 8:00–21:00", phone: "+998935704603", open247: false },
+{ id: "r5", cat: "repair", name: "Teleservis", area: "Яхё Гулямов, 38", lat: 41.3104, lng: 69.2899, rating: 4.2, reviews: 128, hours: "Пн–Сб 9:00–18:00", phone: "+998783335681", open247: false },
+
+{ id: "a1", cat: "auto", name: "Avtoelektrik Avtoservis", area: "Кичик Халқа йўли", lat: 41.3309, lng: 69.3137, rating: 5.0, reviews: 156, hours: "Ежедневно 8:00–20:00", phone: "+998903500222", open247: false },
+{ id: "a2", cat: "auto", name: "Car Driver & Detailing TLZ", area: "Ташкент", lat: 41.3299, lng: 69.3143, rating: 4.9, reviews: 239, hours: "Пн–Сб 9:00–19:00", phone: "+998977239449", open247: false },
+{ id: "a3", cat: "auto", name: "Car Driver & Detailing Poytaht", area: "Корасув, 28", lat: 41.3015, lng: 69.3425, rating: 5.0, reviews: 191, hours: "Пн–Сб 9:00–19:00", phone: "+998930029449", open247: false },
+{ id: "a4", cat: "auto", name: "Avto Service", area: "Ташкент", lat: 41.3623, lng: 69.2227, rating: 5.0, reviews: 10, hours: "Круглосуточно", phone: "+998993656624", open247: true },
+{ id: "a5", cat: "auto", name: "Автосервис GARAGE", area: "Дурбек", lat: 41.3120, lng: 69.1780, rating: 4.9, reviews: 29, hours: "Пн–Сб 9:00–19:00", phone: "+998977520550", open247: false },
+
+{ id: "b1", cat: "beauty", name: "Kimmy Lab", area: "Олой Бозори, 63", lat: 41.3202, lng: 69.2842, rating: 4.8, reviews: 420, hours: "Ежедневно 10:00–21:00", phone: "+998910185588", open247: false },
+{ id: "b2", cat: "beauty", name: "Kimmy Lab", area: "Чименд, 21", lat: 41.3053, lng: 69.2735, rating: 4.9, reviews: 184, hours: "Ежедневно 10:00–21:00", phone: "+998910185589", open247: false },
+{ id: "b3", cat: "beauty", name: "Soho Beauty Club Studio", area: "Кари Ниёзий, 61", lat: 41.3241, lng: 69.2982, rating: 4.6, reviews: 66, hours: "Ежедневно 9:00–20:00", phone: "+998333054040", open247: false },
+{ id: "b4", cat: "beauty", name: "Lilith Beauty Salon", area: "Истиқлол, 6", lat: 41.3158, lng: 69.2819, rating: 5.0, reviews: 17, hours: "Ежедневно 10:00–20:00", phone: "+998555060277", open247: false },
+{ id: "b5", cat: "beauty", name: "Beauty Me", area: "Ифтихор", lat: 41.3405, lng: 69.2703, rating: 4.6, reviews: 90, hours: "Ежедневно 8:00–21:00", phone: "+998981256886", open247: false },
+
+{ id: "d1", cat: "dental", name: "Стоматология DENTA", area: "Амир Темур, 51", lat: 41.3272, lng: 69.2828, rating: 4.9, reviews: 233, hours: "Ежедневно 10:00–20:00", phone: "+998900240420", open247: false },
+{ id: "d2", cat: "dental", name: "Dentcare", area: "Бешарик, 50", lat: 41.2846, lng: 69.3423, rating: 4.9, reviews: 143, hours: "Круглосуточно", phone: "+998981778767", open247: true },
+{ id: "d3", cat: "dental", name: "Magic Dental Implant", area: "Талимарджан, 12", lat: 41.2758, lng: 69.3008, rating: 4.8, reviews: 45, hours: "Круглосуточно", phone: "+998712839157", open247: true },
+{ id: "d4", cat: "dental", name: "SUR'AT STOM 24/7", area: "Катта Олмазор", lat: 41.3096, lng: 69.2445, rating: 4.9, reviews: 95, hours: "Круглосуточно", phone: "+998956333666", open247: true },
+{ id: "d5", cat: "dental", name: "Shokh Dentist Clinic", area: "Фуркат, 11А", lat: 41.3079, lng: 69.2449, rating: 4.9, reviews: 195, hours: "Пн–Сб круглосуточно", phone: "+998990120357", open247: true }
+];
+
+const LAT_MIN = 41.27, LAT_MAX = 41.37, LNG_MIN = 69.17, LNG_MAX = 69.36;
+const W = 800, H = 420, PAD = 30;
+
+let activeCat = "all";
+let query = "";
+let sortBy = "rating";
+let minRating = 0;
+let only24 = false;
+let onlyFav = false;
+let focusId = null;
+let favs = loadFavs();
+
+function loadFavs() {
+try {
+const raw = localStorage.getItem("tsk-services-favs");
+return raw ? new Set(JSON.parse(raw)) : new Set();
+} catch (e) {
+return new Set();
+}
+}
+
+function saveFavs() {
+try {
+localStorage.setItem("tsk-services-favs", JSON.stringify([...favs]));
+} catch (e) {}
+}
+
+const $ = (id) => document.getElementById(id);
+
+function catMeta(id) {
+return CATEGORIES.find((c) => c.id === id) || CATEGORIES[0];
+}
+
+function project(p) {
+const x = PAD + ((p.lng - LNG_MIN) / (LNG_MAX - LNG_MIN)) * (W - PAD * 2);
+const y = PAD + ((LAT_MAX - p.lat) / (LAT_MAX - LAT_MIN)) * (H - PAD * 2);
+return { x, y };
+}
+
+function renderChips() {
+const wrap = $("chips");
+wrap.innerHTML = "";
+CATEGORIES.forEach((c) => {
+const count = c.id === "all" ? PLACES.length : PLACES.filter((p) => p.cat === c.id).length;
+const b = document.createElement("button");
+b.className = "chip" + (c.id === activeCat ? " active" : "");
+b.textContent = c.name;
+const s = document.createElement("small");
+s.textContent = count;
+b.appendChild(s);
+b.addEventListener("click", () => {
+activeCat = c.id;
+renderChips();
+render();
+});
+wrap.appendChild(b);
+});
+}
+
+function renderLegend() {
+const wrap = $("legend");
+wrap.innerHTML = "";
+CATEGORIES.filter((c) => c.id !== "all").forEach((c) => {
+const s = document.createElement("span");
+const i = document.createElement("i");
+i.style.background = c.color;
+s.appendChild(i);
+s.appendChild(document.createTextNode(c.name));
+wrap.appendChild(s);
+});
+}
+
+function filtered() {
+const q = query.trim().toLowerCase();
+let list = PLACES.filter((p) => {
+if (activeCat !== "all" && p.cat !== activeCat) return false;
+if (q && !p.name.toLowerCase().includes(q) && !p.area.toLowerCase().includes(q)) return false;
+if (p.rating < minRating) return false;
+if (only24 && !p.open247) return false;
+if (onlyFav && !favs.has(p.id)) return false;
+return true;
+});
+if (sortBy === "rating") list.sort((a, b) => b.rating - a.rating || b.reviews - a.reviews);
+if (sortBy === "reviews") list.sort((a, b) => b.reviews - a.reviews);
+if (sortBy === "name") list.sort((a, b) => a.name.localeCompare(b.name, "ru"));
+if (sortBy === "near") list.sort((a, b) => distToCenter(a) - distToCenter(b));
+return list;
+}
+
+function renderMap(list) {
+const svg = $("map");
+svg.innerHTML = "";
+const ns = "http://www.w3.org/2000/svg";
+const ids = new Set(list.map((p) => p.id));
+
+for (let i = 1; i < 6; i++) {
+const gx = PAD + (i * (W - PAD * 2)) / 6;
+const gy = PAD + (i * (H - PAD * 2)) / 6;
+const v = document.createElementNS(ns, "line");
+v.setAttribute("x1", gx); v.setAttribute("x2", gx); v.setAttribute("y1", PAD); v.setAttribute("y2", H - PAD);
+v.setAttribute("stroke", "rgba(143,191,165,.07)");
+svg.appendChild(v);
+const h = document.createElementNS(ns, "line");
+h.setAttribute("x1", PAD); h.setAttribute("x2", W - PAD); h.setAttribute("y1", gy); h.setAttribute("y2", gy);
+h.setAttribute("stroke", "rgba(143,191,165,.07)");
+svg.appendChild(h);
+}
+
+const label = document.createElementNS(ns, "text");
+label.setAttribute("x", PAD);
+label.setAttribute("y", H - 10);
+label.setAttribute("fill", "#5f706d");
+label.setAttribute("font-size", "12");
+label.textContent = "Ташкент · схема";
+svg.appendChild(label);
+
+PLACES.forEach((p) => {
+const pos = project(p);
+const c = document.createElementNS(ns, "circle");
+c.setAttribute("cx", pos.x.toFixed(1));
+c.setAttribute("cy", pos.y.toFixed(1));
+c.setAttribute("r", focusId === p.id ? 9 : 6);
+c.setAttribute("fill", catMeta(p.cat).color);
+c.setAttribute("fill-opacity", ids.has(p.id) ? "0.95" : "0.15");
+c.setAttribute("class", "marker" + (focusId === p.id ? " focus" : ""));
+c.addEventListener("click", () => focusPlace(p.id));
+const t = document.createElementNS(ns, "title");
+t.textContent = p.name;
+c.appendChild(t);
+svg.appendChild(c);
+});
+}
+
+function makeCard(p) {
+const card = document.createElement("article");
+card.className = "card" + (focusId === p.id ? " focus" : "");
+card.id = "card-" + p.id;
+
+const top = document.createElement("div");
+top.className = "card-top";
+const tag = document.createElement("span");
+tag.className = "tag";
+tag.textContent = catMeta(p.cat).name;
+const right = document.createElement("div");
+right.style.display = "flex";
+right.style.alignItems = "center";
+right.style.gap = "8px";
+const rating = document.createElement("span");
+rating.className = "rating";
+rating.textContent = "★ " + p.rating.toFixed(1);
+const small = document.createElement("small");
+small.textContent = p.reviews;
+rating.appendChild(small);
+const fav = document.createElement("button");
+fav.className = "fav" + (favs.has(p.id) ? " on" : "");
+fav.setAttribute("aria-label", "В избранное");
+fav.textContent = favs.has(p.id) ? "♥" : "♡";
+fav.addEventListener("click", () => toggleFav(p.id));
+right.appendChild(rating);
+right.appendChild(fav);
+top.appendChild(tag);
+top.appendChild(right);
+
+const h = document.createElement("h3");
+h.textContent = p.name;
+
+const status = document.createElement("span");
+status.className = "status " + (p.open247 ? "open" : "closed");
+status.textContent = p.open247 ? "Работает круглосуточно" : "Есть часы работы";
+
+const meta = document.createElement("div");
+meta.className = "meta";
+meta.appendChild(metaRow("⌖", p.area));
+meta.appendChild(metaRow("◷", p.hours));
+
+const actions = document.createElement("div");
+actions.className = "actions";
+const call = document.createElement("a");
+call.className = "btn primary";
+call.href = "tel:" + p.phone;
+call.textContent = "Позвонить";
+const map = document.createElement("a");
+map.className = "btn";
+map.href = "https://www.google.com/maps/search/?api=1&query=" + p.lat + "," + p.lng;
+map.target = "_blank";
+map.rel = "noopener";
+map.textContent = "Маршрут";
+const cp = document.createElement("button");
+cp.className = "btn";
+cp.textContent = "Телефон";
+cp.addEventListener("click", () => copyText(p.phone, "Телефон скопирован"));
+const ca = document.createElement("button");
+ca.className = "btn";
+ca.textContent = "Адрес";
+ca.addEventListener("click", () => copyText(p.name + ", " + p.area + ", Ташкент", "Адрес скопирован"));
+actions.appendChild(call);
+actions.appendChild(map);
+actions.appendChild(cp);
+actions.appendChild(ca);
+
+card.appendChild(top);
+card.appendChild(h);
+card.appendChild(status);
+card.appendChild(meta);
+card.appendChild(actions);
+return card;
+}
+
+function toast(msg) {
+const t = $("toast");
+t.textContent = msg;
+t.classList.add("show");
+clearTimeout(toast.timer);
+toast.timer = setTimeout(() => t.classList.remove("show"), 1800);
+}
+
+function fallbackCopy(text, done) {
+const ta = document.createElement("textarea");
+ta.value = text;
+ta.style.position = "fixed";
+ta.style.opacity = "0";
+document.body.appendChild(ta);
+ta.select();
+try { document.execCommand("copy"); } catch (e) {}
+ta.remove();
+done();
+}
+
+function copyText(text, msg) {
+const done = () => toast(msg);
+if (navigator.clipboard && navigator.clipboard.writeText) {
+navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text, done));
+} else {
+fallbackCopy(text, done);
+}
+}
+
+function distToCenter(p) {
+const dLat = p.lat - 41.3111;
+const dLng = (p.lng - 69.2797) * Math.cos(41.31 * Math.PI / 180);
+return Math.sqrt(dLat * dLat + dLng * dLng);
+}
+
+function randomPlace() {
+const list = filtered();
+if (!list.length) { toast("Нет подходящих мест"); return; }
+focusPlace(list[Math.floor(Math.random() * list.length)].id);
+}
+
+function resetFilters() {
+activeCat = "all";
+query = "";
+sortBy = "rating";
+minRating = 0;
+only24 = false;
+onlyFav = false;
+focusId = null;
+$("search").value = "";
+$("sort").value = "rating";
+$("minRating").value = "0";
+$("only24").checked = false;
+$("onlyFav").checked = false;
+$("t24").classList.remove("on");
+$("tfav").classList.remove("on");
+renderChips();
+render();
+}
+
+function metaRow(icon, text) {
+const row = document.createElement("div");
+const i = document.createElement("i");
+i.textContent = icon;
+const span = document.createElement("span");
+span.textContent = text;
+row.appendChild(i);
+row.appendChild(span);
+return row;
+}
+
+function toggleFav(id) {
+if (favs.has(id)) favs.delete(id); else favs.add(id);
+saveFavs();
+$("statFav").textContent = favs.size;
+render();
+}
+
+function focusPlace(id) {
+focusId = id;
+render();
+const el = document.getElementById("card-" + id);
+if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function render() {
+const grid = $("grid");
+grid.innerHTML = "";
+const list = filtered();
+renderMap(list);
+$("count").textContent = "Найдено: " + list.length;
+if (!list.length) {
+const e = document.createElement("div");
+e.className = "empty";
+e.textContent = "Ничего не найдено. Попробуйте изменить фильтры.";
+grid.appendChild(e);
+return;
+}
+list.forEach((p) => grid.appendChild(makeCard(p)));
+}
+
+$("search").addEventListener("input", (e) => { query = e.target.value; render(); });
+$("sort").addEventListener("change", (e) => { sortBy = e.target.value; render(); });
+$("minRating").addEventListener("change", (e) => { minRating = parseFloat(e.target.value); render(); });
+$("only24").addEventListener("change", (e) => { only24 = e.target.checked; $("t24").classList.toggle("on", only24); render(); });
+$("onlyFav").addEventListener("change", (e) => { onlyFav = e.target.checked; $("tfav").classList.toggle("on", onlyFav); render(); });
+
+$("statTotal").textContent = PLACES.length;
+$("statOpen").textContent = PLACES.filter((p) => p.open247).length;
+$("statFav").textContent = favs.size;
+
+$("themeBtn").addEventListener("click", () => {
+document.body.classList.toggle("light");
+$("themeBtn").textContent = document.body.classList.contains("light") ? "Тёмная тема" : "Светлая тема";
+});
+$("randBtn").addEventListener("click", randomPlace);
+$("resetBtn").addEventListener("click", resetFilters);
+$("mapBtn").addEventListener("click", () => {
+const box = $("mapBox");
+const hidden = box.style.display === "none";
+box.style.display = hidden ? "" : "none";
+$("mapBtn").textContent = hidden ? "Скрыть схему" : "Показать схему";
+});
+$("copyFavBtn").addEventListener("click", () => {
+const lines = PLACES.filter((p) => favs.has(p.id)).map((p) => p.name + " — " + p.phone);
+if (!lines.length) { toast("Избранное пусто"); return; }
+copyText(lines.join("\n"), "Избранное скопировано");
+});
+window.addEventListener("scroll", () => $("topBtn").classList.toggle("show", window.scrollY > 400));
+$("topBtn").addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+document.addEventListener("keydown", (e) => {
+if (e.key === "/" && document.activeElement.tagName !== "INPUT") {
+e.preventDefault();
+$("search").focus();
+}
+});
+
+renderChips();
+renderLegend();
+render();
+</script>
+</body>
+</html>
